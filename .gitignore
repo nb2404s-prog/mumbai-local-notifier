@@ -1,0 +1,18 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Temporary/debug files
+response.json
+
+# Old files
+api_old.py
+main_old.py
+config_old.yaml
+test_ntes.py
