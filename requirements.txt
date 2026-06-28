@@ -1,0 +1,2 @@
+ntes-client==0.1.3
+requests
