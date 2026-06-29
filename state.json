@@ -1,12 +1,1 @@
-{
-    "98189": {
-        "current_station": "Chembur",
-        "status": "Running",
-        "delay": 5
-    },
-    "98191": {
-        "current_station": "Kurla Local",
-        "status": "Running",
-        "delay": 0
-    }
-}
+{}
