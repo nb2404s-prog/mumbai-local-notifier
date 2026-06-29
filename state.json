@@ -1,8 +1,8 @@
 {
     "98189": {
-        "current_station": "CSMT",
-        "status": "Not-Started",
-        "delay": 0
+        "current_station": "Sewri",
+        "status": "Running",
+        "delay": 2
     },
     "98191": {
         "current_station": "CSMT",
