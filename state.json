@@ -1,12 +1,12 @@
 {
     "98189": {
-        "current_station": "Sewri",
+        "current_station": "Ravli Junction Cabin",
         "status": "Running",
-        "delay": 2
+        "delay": 5
     },
     "98191": {
-        "current_station": "CSMT",
-        "status": "Not-Started",
-        "delay": 0
+        "current_station": "Cotton Green",
+        "status": "Running",
+        "delay": 3
     }
 }
