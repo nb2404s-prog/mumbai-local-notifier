@@ -1,12 +1,12 @@
 {
     "98189": {
-        "current_station": "Ravli Junction Cabin",
+        "current_station": "Chembur",
         "status": "Running",
         "delay": 5
     },
     "98191": {
-        "current_station": "Cotton Green",
+        "current_station": "Kurla Local",
         "status": "Running",
-        "delay": 3
+        "delay": 0
     }
 }
