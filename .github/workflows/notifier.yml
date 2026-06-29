@@ -2,9 +2,9 @@ name: Mumbai Local Notifier
 
 on:
   schedule:
-    # Every 5 minutes, Monday-Friday, 5:45 PM - 6:45 PM IST
-    - cron: "*/5 * * * *"
-
+    # Every 5 minutes, 5:45 PM to 6:45 PM IST (12:15 to 13:15 UTC)
+    - cron: "15,20,25,30,35,40,45,50,55 12 * * 1-5"
+    - cron: "0,5,10,15 13 * * 1-5"
   workflow_dispatch:
 
 permissions:
@@ -28,9 +28,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create state.json if missing
+        run: |
+          if [ ! -f state.json ]; then
+            echo '{"last_delay": {}}' > state.json
+          fi
+
       - name: Run Notifier
         env:
-          RAILRADAR_API_KEY: ${{ secrets.RAILRADAR_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
@@ -40,9 +45,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-
           git add state.json
-
-          git diff --cached --quiet || git commit -m "Update state.json"
-
+          git diff --cached --quiet || git commit -m "Update state.json [skip ci]"
           git push
