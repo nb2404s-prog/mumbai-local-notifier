@@ -78,7 +78,6 @@ def extract_status(raw):
     next_halt = data.get("nextHalt", {}) or {}
     route = data.get("route", [])
 
-    # Build a lookup of stationCode -> stationName from the route
     code_to_name = {stop.get("stationCode"): stop.get("stationName") for stop in route}
 
     current_code = current.get("stationCode")
@@ -89,43 +88,37 @@ def extract_status(raw):
     elif current.get("isHalt") is False:
         current_station = f"Near {current_station} (moving)"
 
-    next_station = next_halt.get("stationName") or code_to_name.get(next_halt.get("stationCode")) or "Journey Completed"
+    next_station = (
+        next_halt.get("stationName")
+        or code_to_name.get(next_halt.get("stationCode"))
+        or "Journey Completed"
+    )
 
-    return {
-        "train": train.get("number", ""),
-        "current_station": current_station,
-        "next_station": next_station,
-        # Find the live delay from the current route instead of delayMinutes
-"delay = data.get("delayMinutes", 0) or 0"
+    delay = data.get("delayMinutes", 0) or 0
 
-# First preference: current station
-for stop in route:
-    if stop.get("status") == "at-station":
-        delay = max(
-            stop.get("delayArrival", 0) or 0,
-            stop.get("delayDeparture", 0) or 0,
-        )
-        break
-else:
-    # If train is between stations, use the most recent departed station
-    for stop in reversed(route):
-        if stop.get("status") == "departed":
+    for stop in route:
+        if stop.get("status") == "at-station":
             delay = max(
                 stop.get("delayArrival", 0) or 0,
                 stop.get("delayDeparture", 0) or 0,
             )
             break
+    else:
+        for stop in reversed(route):
+            if stop.get("status") == "departed":
+                delay = max(
+                    stop.get("delayArrival", 0) or 0,
+                    stop.get("delayDeparture", 0) or 0,
+                )
+                break
 
-return {
-    "train": train.get("number", ""),
-    "current_station": current_station,
-    "next_station": next_station,
-    "delay": delay,
-    "status": data.get("status", ""),
-    "start_date": data.get("startDate")
-}
+    return {
+        "train": train.get("number", ""),
+        "current_station": current_station,
+        "next_station": next_station,
+        "delay": delay,
         "status": data.get("status", ""),
-        "start_date": data.get("startDate")
+        "start_date": data.get("startDate"),
     }
 
 def format_status_message(alias, status):
