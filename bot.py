@@ -19,6 +19,7 @@ app = Flask(__name__)
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 RAILRADAR_API_KEY = os.environ.get("RAILRADAR_API_KEY")
+MY_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")  # your personal chat id, for auto-start
 
 TRAINS = {
     "98189": "6:14 PM Local",
@@ -29,6 +30,7 @@ TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 # Track active /track sessions per chat_id to avoid duplicate loops
 active_tracking = {}
+last_auto_start_date = None  # prevents starting twice on the same day
 
 # ─── TELEGRAM HELPERS ──────────────────────────────────────────────────────────
 
@@ -199,6 +201,42 @@ def webhook():
 @app.route("/", methods=["GET"])
 def home():
     return "Mumbai Train Notifier Bot is running!"
+
+# ─── AUTO-START SCHEDULER (runs inside the app, checks every 30s) ───────────
+
+def auto_start_watcher():
+    """Background thread: checks the clock and auto-starts tracking at 5:45 PM IST daily."""
+    global last_auto_start_date
+
+    while True:
+        try:
+            now = datetime.now()
+            target_start = now.replace(hour=17, minute=45, second=0, microsecond=0)
+            today_str = now.strftime("%Y-%m-%d")
+            is_weekday = now.weekday() < 5  # Mon-Fri
+
+            # Trigger only once per day, within a 60s window after 5:45 PM, on weekdays
+            if (is_weekday and
+                target_start <= now < target_start + timedelta(seconds=60) and
+                last_auto_start_date != today_str and
+                MY_CHAT_ID):
+
+                last_auto_start_date = today_str
+                if not active_tracking.get(MY_CHAT_ID):
+                    print(f"[AUTO-START] Starting tracking for chat {MY_CHAT_ID} at {now}")
+                    thread = threading.Thread(target=tracking_loop, args=(MY_CHAT_ID,))
+                    thread.daemon = True
+                    thread.start()
+
+        except Exception as e:
+            print(f"[AUTO-START ERROR] {e}")
+
+        time.sleep(30)
+
+# Start the watcher thread when the app boots
+watcher_thread = threading.Thread(target=auto_start_watcher)
+watcher_thread.daemon = True
+watcher_thread.start()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
