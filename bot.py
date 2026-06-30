@@ -117,13 +117,9 @@ def format_status_message(alias, status):
         status_text = "🏁 Journey completed" if journey_completed else "⏳ Today's service has not started yet"
         return (
             f"🚆 {alias}\n"
-"
-            f"━━━━━━━━━━━━━━━
-"
-            f"🔢 Train   : {status['train']}
-"
-            f"{status_text}
-"
+            f"━━━━━━━━━━━━━━━\n"
+            f"🔢 Train   : {status['train']}\n"
+            f"{status_text}\n"
             f"🕐 Checked : {time_str}"
         )
 
@@ -136,18 +132,12 @@ def format_status_message(alias, status):
         delay_text = f"🔴 {delay} min late"
 
     return (
-        f"🚆 {alias}
-"
-        f"━━━━━━━━━━━━━━━
-"
-        f"🔢 Train   : {status['train']}
-"
-        f"📍 Current : {status['current_station']}
-"
-        f"➡️ Next    : {status['next_station']}
-"
-        f"⏱ Delay   : {delay_text}
-"
+        f"🚆 {alias}\n"
+        f"━━━━━━━━━━━━━━━\n"
+        f"🔢 Train   : {status['train']}\n"
+        f"📍 Current : {status['current_station']}\n"
+        f"➡️ Next    : {status['next_station']}\n"
+        f"⏱ Delay   : {delay_text}\n"
         f"🕐 Updated : {time_str}"
     )
 
