@@ -51,7 +51,9 @@ def get_live_status(train_number):
     try:
         r = requests.get(url, headers=headers, timeout=15)
         r.raise_for_status()
-        return r.json()
+        data = r.json()
+        print(f"[DEBUG] RailRadar raw response for {train_number}: {data}")
+        return data
     except Exception as e:
         print(f"RailRadar error for {train_number}: {e}")
         return None
