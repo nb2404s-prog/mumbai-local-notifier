@@ -95,17 +95,36 @@ def extract_status(raw):
         "current_station": current_station,
         "next_station": next_station,
         "delay": data.get("delayMinutes", 0) or 0,
-        "status": data.get("status", "")
+        "status": data.get("status", ""),
+        "start_date": data.get("startDate")
     }
 
 def format_status_message(alias, status):
+    """Format a user-friendly Telegram message."""
+    time_str = ist_now().strftime("%I:%M %p")
+
+    journey_completed = False
+    start_date = status.get("start_date")
+    if start_date:
+        try:
+            today = ist_now().date()
+            train_date = datetime.fromisoformat(start_date).date()
+            if train_date > today:
+                journey_completed = True
+        except Exception:
+            pass
+
     if status["status"] == "not-started":
-        time_str = ist_now().strftime("%I:%M %p")
+        status_text = "🏁 Journey completed" if journey_completed else "⏳ Today's service has not started yet"
         return (
-            f"🚆 {alias}\n"
-            f"━━━━━━━━━━━━━━━\n"
-            f"🔢 Train   : {status['train']}\n"
-            f"⏳ Status  : Today\'s service has not started yet\n"
+            f"🚆 {alias}
+"
+            f"━━━━━━━━━━━━━━━
+"
+            f"🔢 Train   : {status['train']}
+"
+            f"{status_text}
+"
             f"🕐 Checked : {time_str}"
         )
 
@@ -117,15 +136,19 @@ def format_status_message(alias, status):
     else:
         delay_text = f"🔴 {delay} min late"
 
-    time_str = ist_now().strftime("%I:%M %p")
-
     return (
-        f"🚆 {alias}\n"
-        f"━━━━━━━━━━━━━━━\n"
-        f"🔢 Train   : {status['train']}\n"
-        f"📍 Current : {status['current_station']}\n"
-        f"➡️ Next    : {status['next_station']}\n"
-        f"⏱ Delay   : {delay_text}\n"
+        f"🚆 {alias}
+"
+        f"━━━━━━━━━━━━━━━
+"
+        f"🔢 Train   : {status['train']}
+"
+        f"📍 Current : {status['current_station']}
+"
+        f"➡️ Next    : {status['next_station']}
+"
+        f"⏱ Delay   : {delay_text}
+"
         f"🕐 Updated : {time_str}"
     )
 
