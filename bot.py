@@ -59,20 +59,39 @@ def get_live_status(train_number):
         return None
 
 def extract_status(raw):
-    """Normalize RailRadar response into a flat dict. Adjust keys if needed."""
-    if not raw:
+    """Normalize RailRadar response into a flat dict, matching actual API structure."""
+    if not raw or not raw.get("success"):
         return None
-    data = raw.get("data", raw)
-    live = data.get("liveData", data)
+
+    data = raw.get("data", {})
+    train = data.get("train", {})
+    current = data.get("currentLocation", {}) or {}
+    next_halt = data.get("nextHalt", {}) or {}
+
+    current_station = current.get("stationName", "Unknown")
+    if current.get("isHalt") is False and current_station != "Unknown":
+        # train is between stations, moving toward next halt
+        current_station = f"Near {current_station} (moving)"
+
     return {
-        "train": data.get("trainNumber", data.get("train_number", "")),
-        "current_station": live.get("currentStation", live.get("current_station", "Unknown")),
-        "next_station": live.get("nextStation", live.get("next_station", "Unknown")),
-        "delay": live.get("delay", live.get("delayMinutes", 0)) or 0,
-        "status": live.get("status", live.get("currentPosition", ""))
+        "train": train.get("number", ""),
+        "current_station": current_station,
+        "next_station": next_halt.get("stationName", "Unknown"),
+        "delay": data.get("delayMinutes", 0) or 0,
+        "status": data.get("status", "")
     }
 
 def format_status_message(alias, status):
+    if status["status"] == "not-started":
+        time_str = datetime.now().strftime("%I:%M %p")
+        return (
+            f"🚆 {alias}\n"
+            f"━━━━━━━━━━━━━━━\n"
+            f"🔢 Train   : {status['train']}\n"
+            f"⏳ Status  : Not started yet today\n"
+            f"🕐 Checked : {time_str}"
+        )
+
     delay = status["delay"]
     if delay == 0:
         delay_text = "✅ On Time"
