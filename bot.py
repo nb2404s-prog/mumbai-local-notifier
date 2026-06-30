@@ -114,7 +114,7 @@ def format_status_message(alias, status):
             pass
 
     if status["status"] == "not-started":
-        status_text = "🏁 Journey completed" if journey_completed else "⏳ Today's service has not started yet"
+        status_text = "🏁 Journey completed" if journey_completed else "⏳ Yet to start"
         return (
             f"🚆 {alias}\n"
             f"━━━━━━━━━━━━━━━\n"
