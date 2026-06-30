@@ -29,7 +29,8 @@ MY_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")  # your personal chat id, for au
 
 TRAINS = {
     "98189": "6:14 PM Local",
-    "98191": "6:27 PM Local"
+    "98191": "6:27 PM Local",
+    "98565": "10:43 Pm Local"
 }
 
 TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
