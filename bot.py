@@ -69,16 +69,25 @@ def extract_status(raw):
     train = data.get("train", {})
     current = data.get("currentLocation", {}) or {}
     next_halt = data.get("nextHalt", {}) or {}
+    route = data.get("route", [])
 
-    current_station = current.get("stationName", "Unknown")
-    if current.get("isHalt") is False and current_station != "Unknown":
-        # train is between stations, moving toward next halt
+    # Build a lookup of stationCode -> stationName from the route
+    code_to_name = {stop.get("stationCode"): stop.get("stationName") for stop in route}
+
+    current_code = current.get("stationCode")
+    current_station = code_to_name.get(current_code, current_code or "Unknown")
+
+    if current.get("status") == "at-station":
+        current_station = f"{current_station} (at station)"
+    elif current.get("isHalt") is False:
         current_station = f"Near {current_station} (moving)"
+
+    next_station = next_halt.get("stationName") or code_to_name.get(next_halt.get("stationCode"), "Unknown")
 
     return {
         "train": train.get("number", ""),
         "current_station": current_station,
-        "next_station": next_halt.get("stationName", "Unknown"),
+        "next_station": next_station,
         "delay": data.get("delayMinutes", 0) or 0,
         "status": data.get("status", "")
     }
