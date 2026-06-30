@@ -1,8 +1,7 @@
 name: Mumbai Local Notifier
 on:
   schedule:
-    - cron: "15,20,25,30,35,40,45,50,55 12 * * 1-5"
-    - cron: "0,5,10,15 13 * * 1-5"
+    - cron: "44,45,46,47,48 10 * * *"
   workflow_dispatch:
 permissions:
   contents: write
