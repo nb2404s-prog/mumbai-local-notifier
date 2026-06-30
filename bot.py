@@ -10,6 +10,7 @@ import os
 import threading
 import time
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from flask import Flask, request
 import requests
 
@@ -111,7 +112,7 @@ def format_status_message(alias, status):
     else:
         delay_text = f"🔴 {delay} min late"
 
-    time_str = datetime.now().strftime("%I:%M %p")
+    time_str = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%I:%M %p")
 
     return (
         f"🚆 {alias}\n"
@@ -142,7 +143,7 @@ def tracking_loop(chat_id):
     send_message(chat_id, "🟢 Tracking started! You'll get updates every 5 minutes until 6:45 PM.\n\nSend /stop anytime to cancel.")
 
     while active_tracking.get(chat_id):
-        now = datetime.now()
+        now = datetime.now(ZoneInfo("Asia/Kolkata"))
         end_time = now.replace(hour=18, minute=45, second=0, microsecond=0)
 
         if now >= end_time:
@@ -219,7 +220,7 @@ def auto_start_watcher():
 
     while True:
         try:
-            now = datetime.now()
+            now = datetime.now(ZoneInfo("Asia/Kolkata"))
             target_start = now.replace(hour=17, minute=45, second=0, microsecond=0)
             today_str = now.strftime("%Y-%m-%d")
             is_weekday = now.weekday() < 5  # Mon-Fri
