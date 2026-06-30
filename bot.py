@@ -100,7 +100,6 @@ def extract_status(raw):
     }
 
 def format_status_message(alias, status):
-    """Format a user-friendly Telegram message."""
     time_str = ist_now().strftime("%I:%M %p")
 
     journey_completed = False
@@ -128,13 +127,13 @@ def format_status_message(alias, status):
             f"🕐 Checked : {time_str}"
         )
 
-    delay = status["delay"]
-    if delay == 0:
-        delay_text = "✅ On Time"
-    elif delay <= 5:
-        delay_text = f"🟡 {delay} min late"
+    delay=status["delay"]
+    if delay==0:
+        delay_text="✅ On Time"
+    elif delay<=5:
+        delay_text=f"🟡 {delay} min late"
     else:
-        delay_text = f"🔴 {delay} min late"
+        delay_text=f"🔴 {delay} min late"
 
     return (
         f"🚆 {alias}
