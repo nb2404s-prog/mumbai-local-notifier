@@ -96,7 +96,7 @@ def extract_status(raw):
         "current_station": current_station,
         "next_station": next_station,
         # Find the live delay from the current route instead of delayMinutes
-delay = data.get("delayMinutes", 0) or 0
+"delay = data.get("delayMinutes", 0) or 0"
 
 # First preference: current station
 for stop in route:
