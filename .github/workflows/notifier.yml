@@ -1,9 +1,8 @@
 name: Mumbai Local Notifier
 on:
   schedule:
-    # Every 5 minutes, Monday-Friday, 5:45 PM - 6:45 PM IST
     - cron: "15,20,25,30,35,40,45,50,55 12 * * 1-5"
-    - cron: "0,5,10,15 13 * * 1-5"
+    - cron: "0,5,10,15 13 * * 1-5""
   workflow_dispatch:
 permissions:
   contents: write
