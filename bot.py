@@ -12,7 +12,7 @@ import time
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-IST = ZoneInfo("Asia/Kolkata")
+IST = ZoneInfo('Asia/Kolkata')
 
 def ist_now():
     return datetime.now(IST)
@@ -81,14 +81,14 @@ def extract_status(raw):
     code_to_name = {stop.get("stationCode"): stop.get("stationName") for stop in route}
 
     current_code = current.get("stationCode")
-    current_station = code_to_name.get(current_code, current_code or "Unknown")
+    current_station = code_to_name.get(current_code) or current_code or "Awaiting location"
 
     if current.get("status") == "at-station":
         current_station = f"{current_station} (at station)"
     elif current.get("isHalt") is False:
         current_station = f"Near {current_station} (moving)"
 
-    next_station = next_halt.get("stationName") or code_to_name.get(next_halt.get("stationCode"), "Unknown")
+    next_station = next_halt.get("stationName") or code_to_name.get(next_halt.get("stationCode")) or "Journey Completed"
 
     return {
         "train": train.get("number", ""),
@@ -105,7 +105,7 @@ def format_status_message(alias, status):
             f"🚆 {alias}\n"
             f"━━━━━━━━━━━━━━━\n"
             f"🔢 Train   : {status['train']}\n"
-            f"⏳ Status  : Not started yet today\n"
+            f"⏳ Status  : Today\'s service has not started yet\n"
             f"🕐 Checked : {time_str}"
         )
 
