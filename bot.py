@@ -95,7 +95,35 @@ def extract_status(raw):
         "train": train.get("number", ""),
         "current_station": current_station,
         "next_station": next_station,
-        "delay": data.get("delayMinutes", 0) or 0,
+        # Find the live delay from the current route instead of delayMinutes
+delay = data.get("delayMinutes", 0) or 0
+
+# First preference: current station
+for stop in route:
+    if stop.get("status") == "at-station":
+        delay = max(
+            stop.get("delayArrival", 0) or 0,
+            stop.get("delayDeparture", 0) or 0,
+        )
+        break
+else:
+    # If train is between stations, use the most recent departed station
+    for stop in reversed(route):
+        if stop.get("status") == "departed":
+            delay = max(
+                stop.get("delayArrival", 0) or 0,
+                stop.get("delayDeparture", 0) or 0,
+            )
+            break
+
+return {
+    "train": train.get("number", ""),
+    "current_station": current_station,
+    "next_station": next_station,
+    "delay": delay,
+    "status": data.get("status", ""),
+    "start_date": data.get("startDate")
+}
         "status": data.get("status", ""),
         "start_date": data.get("startDate")
     }
